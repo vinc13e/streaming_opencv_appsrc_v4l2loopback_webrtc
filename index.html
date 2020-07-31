@@ -1,0 +1,100 @@
+<!-- HTML Example -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+              <title>Video Capture Example</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://docs.opencv.org/3.4/opencv.js"></script>
+<script src="https://obniz.io/js/jquery-3.2.1.min.js"></script>
+
+</head>
+<body>
+
+
+
+<div class="control">
+<button id="startAndStop">Start</button>
+</div>
+
+<p class="err" id="errorMessage"></p>
+<div>
+
+<video id="videoInput" autoplay playsinline width=720 height=576 class="refrect-lr"></video>
+
+
+
+
+
+<script src="https://webrtc.github.io/adapter/adapter-5.0.4.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+
+
+let streaming = false;
+let videoInput = document.getElementById('videoInput');
+let startAndStop = document.getElementById('startAndStop');
+
+
+startAndStop.addEventListener('click', () => {
+
+if (!streaming){
+
+
+navigator.mediaDevices = navigator.mediaDevices || ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia) ? {
+        getUserMedia: function (c) {
+            return new Promise(function (y, n) {
+                (navigator.mozGetUserMedia ||
+                 navigator.webkitGetUserMedia).call(navigator, c, y, n);
+            });
+        }
+} : null);
+
+if (!navigator.mediaDevices) {
+console.log("getUserMedia() not supported.");
+return;
+}
+
+const medias = {
+        audio: false,
+        video: {
+                facingMode: "environment"
+        }
+};
+
+navigator.mediaDevices.getUserMedia(medias)
+.then(function (stream) {
+    streaming = true;
+    var video = document.getElementById("videoInput");
+    video.src = window.URL.createObjectURL(stream);
+    video.onloadedmetadata = function (e) {
+        video.play();
+        onVideoStarted();
+    };
+})
+.catch(function (err) {
+        console.error('mediaDevice.getUserMedia() error:' + (error.message || error));
+});
+
+
+} else {
+///utils.stopCamera();
+onVideoStopped();
+}
+
+});
+
+function onVideoStarted() {
+    startAndStop.innerText = 'Stop';
+    start();
+}
+function onVideoStopped() {
+    streaming = false;
+    startAndStop.innerText = 'Start';
+}
+
+
+</script>
+</body>
+</html>
